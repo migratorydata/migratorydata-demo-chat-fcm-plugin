@@ -14,3 +14,7 @@ PresenceExtension = true
 ~~~~
 
 Then restart each MigratoryData server of the cluster.
+
+For further details, please refer the documentation at:
+
+http://migratorydata.com/documentation/html/Presence/index.html
