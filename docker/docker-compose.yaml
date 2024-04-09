@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  migratorydata:
+    image: migratorydata/server:latest
+    ports:
+      - "8800:8800"
+    environment:
+      MIGRATORYDATA_JAVA_EXTRA_OPTS: '-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap'
+      MIGRATORYDATA_EXTRA_OPTS: '-DMemory=512MB -DLogLevel=INFO -DClusterDeliveryMode=Guaranteed -DExtension.Presence=true'
+    volumes:
+      - ../fcm-credentials.json:/migratorydata/extensions/fcm-credentials.json
+      - ../build/libs/presence.jar:/migratorydata/extensions/presence.jar

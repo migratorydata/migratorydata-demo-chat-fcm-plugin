@@ -1,5 +1,7 @@
 package com.migratorydata.extension;
 
+import com.migratorydata.extensions.presence.MigratoryDataPresenceListener;
+
 import java.util.Map;
 
 public class MessageStub implements MigratoryDataPresenceListener.Message {

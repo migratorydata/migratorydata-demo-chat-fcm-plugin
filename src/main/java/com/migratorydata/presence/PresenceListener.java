@@ -1,6 +1,6 @@
 package com.migratorydata.presence;
 
-import com.migratorydata.extension.MigratoryDataPresenceListener;
+import com.migratorydata.extensions.presence.MigratoryDataPresenceListener;
 import com.migratorydata.presence.util.FCMPush;
 
 import java.io.IOException;
@@ -14,6 +14,14 @@ import java.util.List;
  */
 public class PresenceListener implements MigratoryDataPresenceListener {
     private PresenceMemoryStorage presenceStorage = new PresenceMemoryStorage();
+
+    public PresenceListener() {
+        try {
+            FCMPush.initialize();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void onClusterMessage(Message message) {
@@ -36,7 +44,7 @@ public class PresenceListener implements MigratoryDataPresenceListener {
             // send push notification
             try {
                 FCMPush.sendPushNotification(tokens, title, body);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

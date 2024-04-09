@@ -1,14 +1,11 @@
 package com.migratorydata.presence.util;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.messaging.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -19,53 +16,37 @@ import java.util.List;
  * @ThreadSafe The methods of this class are always called from the same thread
  */
 public class FCMPush {
-    public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
-    public final static String AUTH_KEY_FCM = "your_fcm_key"; // TODO: update this with your key received from FCM
 
-    public static void sendPushNotification(List<String> tokens, String title, String body) throws IOException {
-        URL url = new URL(API_URL_FCM);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    public final static String FCM_JSON_KEY_PATH = "./extensions/fcm-credentials.json";
 
-        conn.setUseCaches(false);
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
+    //
+    public static void sendPushNotification(List<String> registrationTokens, String title, String body) throws FirebaseMessagingException {
 
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Authorization", "key=" + AUTH_KEY_FCM);
-        conn.setRequestProperty("Content-Type", "application/json");
+        // Use a list containing up to 500 registration tokens.
+        MulticastMessage message = MulticastMessage.builder()
+                .putData("title", title)
+                .putData("body", body)
+                .setNotification(Notification.builder().setBody("New message received!").setTitle(title).build())
+                .addAllTokens(registrationTokens)
+                .build();
+        BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
 
-        String requestPayload = createRequestPayload(tokens, title, body);
-        try {
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(requestPayload);
-            wr.flush();
+        List<SendResponse> rr = response.getResponses();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-
-            String output;
-            System.out.println("Got FCM update result=" + "\n");
-            while ((output = br.readLine()) != null) {
-                System.out.println(output);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (SendResponse s : rr) {
+            System.out.println(s.getException());
         }
+
+        System.out.println(response.getSuccessCount() + " messages were sent successfully");
     }
 
-    private static String createRequestPayload(List<String> tokens, String title, String body) {
-        JSONObject object = new JSONObject();
+    public static void initialize() throws IOException {
+        FileInputStream serviceAccount = new FileInputStream(FCM_JSON_KEY_PATH);
 
-        JSONArray registrationIdsObject = new JSONArray();
-        for (String token : tokens) {
-            registrationIdsObject.add(token);
-        }
-        object.put("registration_ids", registrationIdsObject);
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
 
-        JSONObject notificationObject = new JSONObject();
-        notificationObject.put("title", title);
-        notificationObject.put("body", body);
-        object.put("notification", notificationObject);
-
-        return object.toString();
+        FirebaseApp.initializeApp(options);
     }
 }

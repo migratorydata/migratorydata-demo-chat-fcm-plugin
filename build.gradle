@@ -2,15 +2,11 @@
 // $ ./gradlew buildWithDependencies
 // The result of the build is located in build/libs/presence-extension.jar
 
-/*
- * This generated file contains a sample Java project to get you started.
- * For more details take a look at the Java Quickstart chapter in the Gradle
- * user guide available at https://docs.gradle.org/3.2/userguide/tutorial_java_projects.html
- */
-
 // Apply the java plugin to add support for Java
-apply plugin: 'java'
-
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use 'jcenter' for resolving your dependencies.
@@ -18,19 +14,30 @@ repositories {
     jcenter()
 }
 
-task buildWithDependencies(type: Jar) {
-    baseName = 'presence-extension'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+shadowJar {
+    archiveBaseName.set('presence')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+
+    mergeServiceFiles {
+        include 'META-INF/services/*'
+    }
+
+    relocate 'com.fasterxml', 'm.presence.fasterxml'
+    relocate 'com.github', 'm.presence.github'
+    relocate 'com.google', 'm.presence.google'
+
+    relocate 'io', 'm.presence.io'
+    relocate 'org', 'm.presence.org'
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile files('libs/json-simple-1.1.1.jar')
+    implementation files('libs/json-simple-1.1.1.jar')
 
-    // Declare the dependency for your favourite test framework you want to use in your tests.
-    // TestNG is also supported by the Gradle Test task. Just change the
-    // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
-    // 'test.useTestNG()' to your build script.
-    testCompile 'junit:junit:4.12'
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    implementation group: 'com.migratorydata', name: 'server-extensions-api', version: '6.0.0'
+
+    testImplementation 'junit:junit:4.12'
 }

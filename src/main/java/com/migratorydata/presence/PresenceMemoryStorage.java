@@ -1,6 +1,6 @@
 package com.migratorydata.presence;
 
-import com.migratorydata.extension.MigratoryDataPresenceListener.User;
+import com.migratorydata.extensions.presence.MigratoryDataPresenceListener.User;
 
 import java.util.*;
 
@@ -18,9 +18,37 @@ public class PresenceMemoryStorage {
         String token = user.getExternalToken();
         User currentUser = users.get(token);
         if (currentUser != null) {
-            // if the user already exists, ignore a disconnect presence update corresponding to an older session
-            if (user.isOffline() && user.getSessionId() != currentUser.getSessionId()) {
-                return;
+            // disconnect event one after the other
+            if (user.isOffline() && currentUser.isOffline()) {
+                if (isOldEvent(user, currentUser)) {
+                    return;
+                }
+                // connect event one after the other
+            } else if (!user.isOffline() && !currentUser.isOffline()) {
+                if (currentUser.getSessionId() != user.getSessionId()) {
+                    if (isOldEvent(user, currentUser)) {
+                        return;
+                    }
+                }
+            } else {
+//            // disconnect event
+                if (user.isOffline()) {
+                    if (user.getSessionId() != currentUser.getSessionId()) {
+                        if (isOldEvent(user, currentUser)) {
+                            return;
+                        }
+                    }
+                } else {
+                    // connect event
+                    if (user.getSessionId() == currentUser.getSessionId()) {
+                        // already received disconnect event
+                        return;
+                    } else {
+                        if (isOldEvent(user, currentUser)) {
+                            return;
+                        }
+                    }
+                }
             }
         }
         users.put(token, user);
@@ -62,5 +90,22 @@ public class PresenceMemoryStorage {
         }
 
         return offlineUsers;
+    }
+
+    private boolean isOldEvent(User user, User currentUser) {
+        Integer newMonotonicId = (Integer) user.getAdditionalInfo().get("monotonicId");
+        Integer currentMonotonicId = (Integer) currentUser.getAdditionalInfo().get("monotonicId");
+        if (newMonotonicId != null && currentMonotonicId != null) {
+            if (newMonotonicId < currentMonotonicId) {
+                // ignore this event because is an old event
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // for testing.
+    public User getUser(String externalToken) {
+        return users.get(externalToken);
     }
 }
