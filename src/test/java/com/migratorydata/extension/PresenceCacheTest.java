@@ -2,21 +2,21 @@ package com.migratorydata.extension;
 
 import com.migratorydata.extensions.presence.MigratoryDataPresenceListener;
 
-import com.migratorydata.presence.PresenceMemoryStorage;
+import com.migratorydata.presence.PresenceCache;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class PresenceMemoryStorageTest {
+public class PresenceCacheTest {
 
     String subject = "/s/s";
     List<String> subjects = Arrays.asList(subject);
 
     @Test
     public void test() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         MigratoryDataPresenceListener.Message message = new MessageStub(subject, "data".getBytes());
 
@@ -46,7 +46,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c1_d1_c2_d2() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC1);
         storage.update(userD1);
@@ -59,7 +59,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c1_c2_d1_d2() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC1);
         storage.update(userC2);
@@ -72,7 +72,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c1_c2_d2_d1() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC1);
         storage.update(userC2);
@@ -85,7 +85,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c2_c1_d2_d1() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC2);
         storage.update(userC1);
@@ -98,7 +98,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c1_c2_d1() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC1);
         storage.update(userC2);
@@ -110,7 +110,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c2_c1_d1() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC2);
         storage.update(userC1);
@@ -122,7 +122,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c2_c1_d1_d2() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC2);
         storage.update(userC1);
@@ -135,7 +135,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c2_c1_d2() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC2);
         storage.update(userC1);
@@ -147,7 +147,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c1_d2_c2_d1() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC1);
         storage.update(userD2);
@@ -160,7 +160,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_d1_c1() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userD1);
         storage.update(userC1);
@@ -171,7 +171,7 @@ public class PresenceMemoryStorageTest {
 
     @Test
     public void test_update_with_c1_c1_new_subject() {
-        PresenceMemoryStorage storage = new PresenceMemoryStorage();
+        PresenceCache storage = new PresenceCache();
 
         storage.update(userC1);
         storage.update(userC1NewSubjects);
@@ -179,7 +179,7 @@ public class PresenceMemoryStorageTest {
         List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
         Assert.assertTrue(offlineUsers.size() == 0);
 
-        MigratoryDataPresenceListener.User user = storage.getUser(userC1NewSubjects.getExternalToken());
+        MigratoryDataPresenceListener.User user = storage.getUserByToken(userC1NewSubjects.getExternalToken());
         Assert.assertTrue(user.getSubjects().get(0).equals(userC1NewSubjects.getSubjects().get(0)));
     }
 }

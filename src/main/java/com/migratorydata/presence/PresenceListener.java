@@ -1,63 +1,78 @@
 package com.migratorydata.presence;
 
 import com.migratorydata.extensions.presence.MigratoryDataPresenceListener;
-import com.migratorydata.presence.util.FCMPush;
+import com.migratorydata.presence.util.FCMPushNotificationSender;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class provides an example of using MigratoryData's presence extension API.
+ * This class provides an example of using MigratoryData's presence extension API to send push notifications
+ * to offline users using Firebase Cloud Messaging (FCM).
+ *
+ * <p>For more information on MigratoryData's presence extension API, refer to the MigratoryData documentation.
  *
  * @ThreadSafe The methods of this class are always called from the same thread.
  */
 public class PresenceListener implements MigratoryDataPresenceListener {
-    private PresenceMemoryStorage presenceStorage = new PresenceMemoryStorage();
+    private PresenceCache presenceCache = new PresenceCache(); // Cache to store presence information
 
+    /**
+     * Initializes the Firebase client for sending push notifications.
+     *
+     * @throws RuntimeException If an error occurs during Firebase initialization.
+     */
     public PresenceListener() {
         try {
-            FCMPush.initialize();
+            FCMPushNotificationSender.initialize();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Callback method invoked when a message is received by the MigratoryData cluster.
+     * <p>
+     * <b>Important note:</b> This method is invoked by exactly one member within the MigratoryData cluster; consider
+     * this member as randomly chosen (even if the selection is based on the message's subject).
+     *
+     * @param message The received message.
+     */
     @Override
     public void onClusterMessage(Message message) {
-        System.out.println("Got onClusterMessage=" + message.toString());
+        System.out.println("Cluster received message: " + message);
 
-        List<User> offlineUsers = presenceStorage.getOfflineUsers(message.getSubject());
-        if (offlineUsers.size() > 0) {
-            // tokens of offline users
-            List<String> tokens = new ArrayList<>();
-            for (User user : offlineUsers) {
-                tokens.add(user.getExternalToken());
-            }
+        List<User> offlineUsers = presenceCache.getOfflineUsers(message.getSubject());
 
-            // title of the push notification (in this example, the tile is the subject)
-            String title = message.getSubject();
+        List<String> offlineUserTokens = new ArrayList<>();
+        for (User offlineUser : offlineUsers) {
+            offlineUserTokens.add(offlineUser.getExternalToken());
+        }
 
-            // body of the push notification
-            String body = new String(message.getContent());
-
-            // send push notification
+        if (!offlineUserTokens.isEmpty()) {
+            String title = message.getSubject(); // title of the push notification, using the subject as the title
+            String body = new String(message.getContent()); // body of the push notification
             try {
-                FCMPush.sendPushNotification(tokens, title, body);
+                FCMPushNotificationSender.sendPushNotification(offlineUserTokens, title, body);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Callback method invoked when user presence status changes.*
+     * <p>
+     * <b>Important note:</b> This method is called by all members of the MigratoryData cluster, not just by the cluster
+     * member to which the user is connected.
+     *
+     * @param user The user whose presence status has changed.
+     */
     @Override
     public void onUserPresence(User user) {
-        if (user.isOffline()) {
-            System.out.println("Got a user disconnection presence update: " + user.toString());
-        } else {
-            System.out.println("Got a user connection presence update: " + user.toString());
-        }
-
-        presenceStorage.update(user);
+        System.out.println("User presence event detected: " + user);
+        
+        presenceCache.update(user);
     }
 }
