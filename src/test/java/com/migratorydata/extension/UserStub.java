@@ -2,25 +2,20 @@ package com.migratorydata.extension;
 
 import com.migratorydata.extensions.presence.MigratoryDataPresenceListener;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class UserStub implements MigratoryDataPresenceListener.User {
 
-    private int sessionId;
     List<String> subjects;
     String externalToken;
     boolean offline;
 
-    Map<String, Object> additionalInfo = new HashMap<>();
-
-    public UserStub(List<String> subjects, String externalToken, Integer monotonicId, boolean offline, int sessionId) {
+    public UserStub(List<String> subjects, String externalToken, boolean offline) {
         this.subjects = subjects;
         this.externalToken = externalToken;
-        this.additionalInfo.put("monotonicId", monotonicId);
         this.offline = offline;
-        this.sessionId = sessionId;
     }
 
     @Override
@@ -30,7 +25,7 @@ public class UserStub implements MigratoryDataPresenceListener.User {
 
     @Override
     public long getSessionId() {
-        return sessionId;
+        return 0;
     }
 
     @Override
@@ -45,7 +40,7 @@ public class UserStub implements MigratoryDataPresenceListener.User {
 
     @Override
     public Map<String, Object> getAdditionalInfo() {
-        return additionalInfo;
+        return Collections.EMPTY_MAP;
     }
 
     @Override
