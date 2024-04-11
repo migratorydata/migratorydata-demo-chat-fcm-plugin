@@ -17,12 +17,8 @@ import java.util.List;
  * @ThreadSafe The methods of this class are always called from the same thread.
  */
 public class FCMPushNotificationSender {
-    /**
-     * The path to the FCM JSON configuration file.
-     * Change this path to match the location of your FCM credentials file.
-     */
-    public final static String FCM_JSON_KEY_PATH = "./extensions/fcm-credentials.json";
-    public final static int MAX_CHUNK_SIZE = 500; // FCM's MulticastMessage has a cap of 500 devices per message
+    public final static String FCM_JSON_KEY_PATH = "./extensions/fcm-credentials.json"; // path to your FCM credentials file
+    public final static int MAX_CHUNK_SIZE = 500; // FCM's API has a cap of 500 devices per MulticastMessage
 
     /**
      * Initializes the FCM client with the FCM credentials.
@@ -40,7 +36,7 @@ public class FCMPushNotificationSender {
     }
 
     /**
-     * Sends a push notification to the specified registration tokens with the given title and body.
+     * Sends a push notification to the specified FCM tokens with the given title and body.
      *
      * @param fcmTokens The FCM registration tokens of the devices to receive the notification.
      * @param title The title of the notification.

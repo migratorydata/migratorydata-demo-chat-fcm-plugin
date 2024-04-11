@@ -58,7 +58,7 @@ public class PresenceCache {
             }
         }
 
-        // assign the new user presence event to the fcmToken of the current user
+        // assign the new user object to the fcmToken of the current user
         userByToken.put(fcmToken, user);
 
         // add received user to the list of users for each of its subscribed subjects
@@ -74,12 +74,12 @@ public class PresenceCache {
     }
 
     /**
-     * Retrieves the list of offline users for a given subject.
+     * Retrieves the list of offline users subscribed to the given subject.
      *
      * @param subject The subject for which offline users are requested.
-     * @return A list of offline users.
+     * @return The list of offline users subscribed to the given subject.
      */
-    public List<User> getOfflineUsers(String subject) {
+    public List<User> getOfflineUsersBySubject(String subject) {
         List<User> offlineUsers = new ArrayList<>();
 
         Set<User> users = usersBySubject.get(subject);

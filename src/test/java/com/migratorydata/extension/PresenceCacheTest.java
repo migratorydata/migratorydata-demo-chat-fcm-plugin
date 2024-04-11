@@ -22,12 +22,12 @@ public class PresenceCacheTest {
 
         storage.update(new UserStub(subjects, "extToken", 1, false, 1));
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(message.getSubject());
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(message.getSubject());
         Assert.assertTrue(offlineUsers.size() == 0);
 
         storage.update(new UserStub(subjects, "extToken", 1, true, 1));
 
-        offlineUsers = storage.getOfflineUsers(message.getSubject());
+        offlineUsers = storage.getOfflineUsersBySubject(message.getSubject());
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -53,7 +53,7 @@ public class PresenceCacheTest {
         storage.update(userC2);
         storage.update(userD2);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -66,7 +66,7 @@ public class PresenceCacheTest {
         storage.update(userD1);
         storage.update(userD2);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -79,7 +79,7 @@ public class PresenceCacheTest {
         storage.update(userD2);
         storage.update(userD1);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -92,7 +92,7 @@ public class PresenceCacheTest {
         storage.update(userD2);
         storage.update(userD1);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -104,7 +104,7 @@ public class PresenceCacheTest {
         storage.update(userC2);
         storage.update(userD1);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 0);
     }
 
@@ -116,7 +116,7 @@ public class PresenceCacheTest {
         storage.update(userC1);
         storage.update(userD1);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 0);
     }
 
@@ -129,7 +129,7 @@ public class PresenceCacheTest {
         storage.update(userD1);
         storage.update(userD2);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -141,7 +141,7 @@ public class PresenceCacheTest {
         storage.update(userC1);
         storage.update(userD2);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -154,7 +154,7 @@ public class PresenceCacheTest {
         storage.update(userC2);
         storage.update(userD1);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -165,7 +165,7 @@ public class PresenceCacheTest {
         storage.update(userD1);
         storage.update(userC1);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 1);
     }
 
@@ -176,7 +176,7 @@ public class PresenceCacheTest {
         storage.update(userC1);
         storage.update(userC1NewSubjects);
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsers(subject);
+        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUsersBySubject(subject);
         Assert.assertTrue(offlineUsers.size() == 0);
 
         MigratoryDataPresenceListener.User user = storage.getUserByToken(userC1NewSubjects.getExternalToken());

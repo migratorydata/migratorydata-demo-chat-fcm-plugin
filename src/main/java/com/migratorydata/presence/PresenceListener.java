@@ -7,21 +7,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * This class provides an example of using MigratoryData's presence extension API to send push notifications
- * to offline users using Firebase Cloud Messaging (FCM).
+ * This class demonstrates how to use MigratoryData's presence extension API to send push notifications to users who
+ * are offline, using Firebase Cloud Messaging (FCM).
  *
  * <p>For more information on MigratoryData's presence extension API, refer to the MigratoryData documentation.
  *
  * @ThreadSafe The methods of this class are always called from the same thread.
  */
 public class PresenceListener implements MigratoryDataPresenceListener {
-    private PresenceCache presenceCache = new PresenceCache(); // Cache to store presence information
+    private PresenceCache presenceCache = new PresenceCache(); // cache to store presence information
 
     /**
-     * Initializes the Firebase client for sending push notifications.
+     * Initializes the FCM client for sending push notifications.
      *
-     * @throws RuntimeException If an error occurs during Firebase initialization.
+     * @throws RuntimeException If an error occurs during the FCM client initialization.
      */
     public PresenceListener() {
         try {
@@ -29,6 +30,21 @@ public class PresenceListener implements MigratoryDataPresenceListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Callback method invoked when user presence status changes.
+     * <p>
+     * <b>Important note:</b> This method is called by all members of the MigratoryData cluster, not just by the cluster
+     * member to which the user is connected.
+     *
+     * @param user The user whose presence status has changed.
+     */
+    @Override
+    public void onUserPresence(User user) {
+        System.out.println("User presence event detected: " + user);
+
+        presenceCache.update(user);
     }
 
     /**
@@ -43,7 +59,7 @@ public class PresenceListener implements MigratoryDataPresenceListener {
     public void onClusterMessage(Message message) {
         System.out.println("Cluster received message: " + message);
 
-        List<User> offlineUsers = presenceCache.getOfflineUsers(message.getSubject());
+        List<User> offlineUsers = presenceCache.getOfflineUsersBySubject(message.getSubject());
 
         List<String> offlineUserTokens = new ArrayList<>();
         for (User offlineUser : offlineUsers) {
@@ -59,20 +75,5 @@ public class PresenceListener implements MigratoryDataPresenceListener {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Callback method invoked when user presence status changes.*
-     * <p>
-     * <b>Important note:</b> This method is called by all members of the MigratoryData cluster, not just by the cluster
-     * member to which the user is connected.
-     *
-     * @param user The user whose presence status has changed.
-     */
-    @Override
-    public void onUserPresence(User user) {
-        System.out.println("User presence event detected: " + user);
-        
-        presenceCache.update(user);
     }
 }
