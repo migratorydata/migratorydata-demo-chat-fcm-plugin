@@ -56,6 +56,8 @@ public class FCMPushNotificationSender {
                     .build();
 
             BatchResponse batchResponse = FirebaseMessaging.getInstance().sendMulticast(message);
+            System.out.println("Message sent successfully to " + batchResponse.getSuccessCount() + " users.");
+            System.out.println("Message sent failure to " + batchResponse.getFailureCount() + " users.");
             for (SendResponse sendResponse : batchResponse.getResponses()) {
                 String messageId = sendResponse.getMessageId();
                 if (sendResponse.isSuccessful()) {
