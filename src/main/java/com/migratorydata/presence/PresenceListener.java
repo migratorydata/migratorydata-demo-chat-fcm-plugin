@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * This class demonstrates how to use MigratoryData's presence extension API to send push notifications to users who
  * are offline, using Firebase Cloud Messaging (FCM).
@@ -17,7 +16,7 @@ import java.util.List;
  * @ThreadSafe The methods of this class are always called from the same thread.
  */
 public class PresenceListener implements MigratoryDataPresenceListener {
-    private PresenceCache presenceCache = new PresenceCache(); // cache to store presence information
+    private PresenceCache presenceCache = new PresenceCache(); // a cache to store presence information
 
     /**
      * Initializes the FCM client for sending push notifications.
@@ -33,12 +32,14 @@ public class PresenceListener implements MigratoryDataPresenceListener {
     }
 
     /**
-     * Callback method invoked when user presence status changes.
+     * Callback function triggered whenever a user connects, disconnects, or updates its subscribed subjects (by
+     * subscribing to or unsubscribing from them).
+     *
      * <p>
      * <b>Important note:</b> This method is called by all members of the MigratoryData cluster, not just by the cluster
      * member to which the user is connected.
      *
-     * @param user The user whose presence status has changed.
+     * @param user The user whose presence status has changed
      */
     @Override
     public void onUserPresence(User user) {
@@ -48,7 +49,7 @@ public class PresenceListener implements MigratoryDataPresenceListener {
     }
 
     /**
-     * Callback method invoked when a message is received by the MigratoryData cluster.
+     * Callback method invoked whenever a message is received by the MigratoryData cluster.
      * <p>
      * <b>Important note:</b> This method is invoked by exactly one member within the MigratoryData cluster; consider
      * this member as randomly chosen (even if the selection is based on the message's subject).
@@ -59,13 +60,8 @@ public class PresenceListener implements MigratoryDataPresenceListener {
     public void onClusterMessage(Message message) {
         System.out.println("Cluster received message: " + message);
 
-        List<User> offlineUsers = presenceCache.getOfflineUsersBySubject(message.getSubject());
-
-        List<String> offlineUserTokens = new ArrayList<>();
-        for (User offlineUser : offlineUsers) {
-            offlineUserTokens.add(offlineUser.getExternalToken());
-        }
-
+        String subject = message.getSubject();
+        List<String> offlineUserTokens = presenceCache.getOfflineUserTokens(subject);
         if (!offlineUserTokens.isEmpty()) {
             String title = message.getSubject(); // title of the push notification, using the subject as the title
             String body = new String(message.getContent()); // body of the push notification
