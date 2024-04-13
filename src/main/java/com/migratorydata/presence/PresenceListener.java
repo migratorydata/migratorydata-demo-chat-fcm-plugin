@@ -4,7 +4,6 @@ import com.migratorydata.extensions.presence.MigratoryDataPresenceListener;
 import com.migratorydata.presence.util.FCMPushNotificationSender;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

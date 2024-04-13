@@ -34,7 +34,9 @@ public class PresenceCache {
         for (String cachedSubject : cachedSubjects) {
             if (!subjects.contains(cachedSubject)) {
                 Set<String> tokens = tokensBySubject.get(cachedSubject);
-                tokens.remove(token);
+                if (tokens != null) {
+                    tokens.remove(token);
+                }
             }
         }
 
