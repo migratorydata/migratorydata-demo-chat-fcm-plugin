@@ -12,7 +12,6 @@ import java.util.*;
  */
 public class PresenceCache {
     private Map<String, User> userByToken = new HashMap<>(); // fcm token -> user
-    private Map<String, Set<String>> subjectsByToken = new HashMap<>(); // user's token -> subjects subscribed by user
     private Map<String, Set<String>> tokensBySubject = new HashMap<>(); // subject -> tokens of users subscribed to subject
 
     /**

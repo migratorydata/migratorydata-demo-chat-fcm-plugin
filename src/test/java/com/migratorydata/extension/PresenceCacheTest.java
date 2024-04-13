@@ -23,7 +23,7 @@ public class PresenceCacheTest {
 
         storage.update(new UserStub(subjects, "extToken", false));
 
-        List<MigratoryDataPresenceListener.User> offlineUsers = storage.getOfflineUserTokens(message.getSubject());
+        List<String> offlineUsers = storage.getOfflineUserTokens(message.getSubject());
         Assert.assertTrue(offlineUsers.size() == 0);
 
         storage.update(new UserStub(subjects, "extToken", true));
@@ -42,8 +42,8 @@ public class PresenceCacheTest {
 
         storage.update(new UserStub(subjects, "extToken",  true));
 
-        List<MigratoryDataPresenceListener.User> offlineUsers1 = storage.getOfflineUserTokens(message1.getSubject());
-        List<MigratoryDataPresenceListener.User> offlineUsers2 = storage.getOfflineUserTokens(message2.getSubject());
+        List<String> offlineUsers1 = storage.getOfflineUserTokens(message1.getSubject());
+        List<String> offlineUsers2 = storage.getOfflineUserTokens(message2.getSubject());
 
         Assert.assertTrue(offlineUsers1.size() == 1);
         Assert.assertTrue(offlineUsers2.size() == 1);
@@ -74,10 +74,10 @@ public class PresenceCacheTest {
 
         storage.update(new UserStub(subjects, "extToken",  true));
 
-        List<MigratoryDataPresenceListener.User> offlineUsers1 = storage.getOfflineUserTokens(message1.getSubject());
-        List<MigratoryDataPresenceListener.User> offlineUsers2 = storage.getOfflineUserTokens(message2.getSubject());
-        List<MigratoryDataPresenceListener.User> offlineUsers3 = storage.getOfflineUserTokens(message3.getSubject());
-        List<MigratoryDataPresenceListener.User> offlineUsers4 = storage.getOfflineUserTokens(message4.getSubject());
+        List<String> offlineUsers1 = storage.getOfflineUserTokens(message1.getSubject());
+        List<String> offlineUsers2 = storage.getOfflineUserTokens(message2.getSubject());
+        List<String> offlineUsers3 = storage.getOfflineUserTokens(message3.getSubject());
+        List<String> offlineUsers4 = storage.getOfflineUserTokens(message4.getSubject());
 
         Assert.assertTrue(offlineUsers1.size() == 1);
         Assert.assertTrue(offlineUsers2.size() == 1);
